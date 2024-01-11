@@ -9,7 +9,7 @@ app.use(
     origin: "http://localhost:3000",
   })
 );
-
+app.set('port', (5000));
 app.use(express.json());
 const errorHandeler = require("./utilities/errorHendeler");
 const userRouter = require("./router/user");
