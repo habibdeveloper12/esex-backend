@@ -38,6 +38,10 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Address",
   },
+  wallet: {
+    type: Number,
+    default: 0,
+  },
 });
 
 userSchema.methods.getJWTtoken = function () {
@@ -45,7 +49,16 @@ userSchema.methods.getJWTtoken = function () {
     expiresIn: "1h",
   });
 };
+userSchema.methods.updateWallet = async function (amount) {
+  // Update the wallet amount
+  this.wallet += amount;
 
+  // Save the updated user document to the database
+  await this.save();
+
+  // Return the updated wallet amount
+  return this.wallet;
+};
 const userModel = new mongoose.model("User", userSchema);
 
 module.exports = userModel;
