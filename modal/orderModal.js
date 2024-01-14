@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const orderSchema = new Schema(
@@ -9,17 +9,17 @@ const orderSchema = new Schema(
     },
     sender: { type: Object, required: true },
     recipient: { type: Object, required: true },
-    packages: { type: Object, required: true },
-    addons: { type: Object, required: true },
+    packages: { type: Object },
+    addons: { type: Object },
     payment: { type: String },
+    shipment: { type: Object },
+    orderItem: { type: String, default: "Saved" },
     orderStatus: { type: String, default: "pending" },
   },
   { timestamps: true, toJSON: { getters: true }, id: false }
 );
 
-// Adding a pre-save middleware to generate orderId
 orderSchema.pre("save", async function (next) {
-  // Generate a unique 6-digit orderId before saving the document
   if (!this.orderId) {
     const lastOrder = await this.constructor.findOne(
       {},
@@ -28,12 +28,11 @@ orderSchema.pre("save", async function (next) {
     );
     const lastOrderId = lastOrder ? lastOrder.orderId : 0;
 
-    // Increment the lastOrderId and pad with zeros to make it 6 digits
     this.orderId = (lastOrderId + 1).toString().padStart(6, "0");
   }
   next();
 });
 
-const orderModel = new mongoose.model("Order", orderSchema);
+const Order = mongoose.model("Order", orderSchema);
 
-module.exports = orderModel;
+module.exports = Order;

@@ -55,7 +55,27 @@ exports.findUser = async (req, res, next) => {
     console.log(e);
   }
 };
+exports.updateWallet = async (req, res, next) => {
+  try {
+    const { email, wallet } = req.body;
+    const user = await User.findOneAndUpdate(
+      { email: email },
+      {
+        wallet: wallet,
+      },
+      { new: true } // upsert: true creates a new user if not found
+    );
+    if (user) {
+      return res
+        .status(202)
+        .send({ success: true, message: "Wallet debited", data: user });
+    }
 
+    // sendToken(user, 200, res);
+  } catch (e) {
+    console.log(e);
+  }
+};
 exports.getSingleUser = async (req, res, next) => {
   console.log("Received data from the client req. body:", req.body);
   try {

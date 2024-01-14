@@ -42,6 +42,12 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  orders: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Order",
+    },
+  ],
 });
 
 userSchema.methods.getJWTtoken = function () {
@@ -59,6 +65,6 @@ userSchema.methods.updateWallet = async function (amount) {
   // Return the updated wallet amount
   return this.wallet;
 };
-const userModel = new mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
 
-module.exports = userModel;
+module.exports = User;

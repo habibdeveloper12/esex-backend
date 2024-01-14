@@ -15,6 +15,7 @@ const {
   getUserByEmail,
   findRAddress,
   handleRDelete,
+  updateWallet,
 } = require("../controler/userControler");
 const router = express.Router();
 
@@ -34,5 +35,6 @@ router.get("/recivedAddressAll", findAddressr);
 router.delete("/addressDelete/:id/", handleDelete);
 router.delete("/addressrDelete/:id/", handleRDelete);
 router.get("/", findUser);
+router.patch("/wallet", updateWallet);
 router.get("/singleByEmail/:email", getSingleUser);
 module.exports = router;
