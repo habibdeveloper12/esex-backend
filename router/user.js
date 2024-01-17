@@ -16,6 +16,8 @@ const {
   findRAddress,
   handleRDelete,
   updateWallet,
+  addBank,
+  allUser,
 } = require("../controler/userControler");
 const router = express.Router();
 
@@ -25,11 +27,13 @@ router.post("/save-address", savedAddress);
 router.post("/save-addressr", savedAddressr);
 router.post("/check-nickname", checkNickName);
 router.post("/check-nicknamer", checkNickNamer);
+router.post("/add-bank", addBank);
 
 router.put("/setDefaultAddress/:id/", setUserDefaultAddress);
 router.get("/addressAll", findAddress);
 router.get("/addressrAll", findRAddress);
 router.get("/peruser", getUserByEmail);
+router.get("/all", allUser);
 router.get("/default/address", defaultAddress);
 router.get("/recivedAddressAll", findAddressr);
 router.delete("/addressDelete/:id/", handleDelete);

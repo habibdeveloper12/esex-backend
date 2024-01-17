@@ -345,3 +345,35 @@ exports.getUserByEmail = async (req, res, next) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+exports.allUser = async (req, res, next) => {
+  try {
+    const user = await User.find({});
+
+    res.json(user);
+  } catch (error) {
+    console.error("Error fetching addresses:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+exports.addBank = async (req, res, next) => {
+  try {
+    const { email } = req.query;
+    const body = req.body;
+    const bank = User.findOneAndUpdate(
+      { email: email },
+      { $set: { ...body } },
+      { new: true } // Return the updated document
+    ).then((updatedUser) => {
+      if (updatedUser) {
+        console.log("User updated:", updatedUser);
+      } else {
+        console.log("User not found");
+      }
+    });
+
+    res.json(bank);
+  } catch (error) {
+    console.error("Error fetching addresses:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};

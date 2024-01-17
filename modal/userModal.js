@@ -48,6 +48,18 @@ const userSchema = new mongoose.Schema({
       ref: "Order",
     },
   ],
+  yourBank: {
+    type: String,
+    required: true,
+  },
+  transactionId: {
+    type: String,
+    required: true,
+  },
+  amount: {
+    type: String,
+    required: true,
+  },
 });
 
 userSchema.methods.getJWTtoken = function () {
@@ -56,13 +68,10 @@ userSchema.methods.getJWTtoken = function () {
   });
 };
 userSchema.methods.updateWallet = async function (amount) {
-  // Update the wallet amount
   this.wallet += amount;
 
-  // Save the updated user document to the database
   await this.save();
 
-  // Return the updated wallet amount
   return this.wallet;
 };
 const User = mongoose.model("User", userSchema);

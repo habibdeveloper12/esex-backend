@@ -223,6 +223,36 @@ exports.updateOrder = async (req, res, next) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+exports.addNote = async (req, res, next) => {
+  const { userNote } = req.body;
+  const id = req.params.id;
+  console.log(id, userNote);
+  try {
+    const order = await Order.findOneAndUpdate(
+      { _id: id },
+      {
+        userNote,
+      },
+      { new: true, upsert: true }
+    );
+    console.log(order);
+    // const boughtShipment = await client.Shipment.buy(
+    //   shipment.shipment_id,
+    //   shipment
+    // );
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    res.status(200).json({
+      data: order,
+      message: "Order updated successfully",
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 exports.adminOrder = async (req, res, next) => {
   try {
     const orderId = req.params.id;
@@ -258,11 +288,11 @@ exports.adminOrder = async (req, res, next) => {
 };
 exports.allOrder = async (req, res, next) => {
   try {
-    const orders = Order.find({}).lean();
+    const orders = await Order.find({}).lean(); // Add 'await' here
 
     res.status(200).json(orders);
   } catch (error) {
-    console.error("Error updating order status:", error.message);
+    console.error("Error fetching all orders:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
