@@ -14,35 +14,35 @@ const client = new EasyPostClient(
 
 exports.orderShip = async (req, res, next) => {
   const { sender, recipient, parcel } = req.body;
-  console.log(req.body);
+  console.log(req.body, parcel);
   try {
     let shipment;
-    console.log(shipment);
+
     shipment = await client.Shipment.create({
       from_address: {
-        street1: "417 MONTGOMERY ST",
-        street2: "FLOOR 5",
-        city: "SAN FRANCISCO",
-        state: "CA",
+        street1: sender.street1,
+        street2: sender.street2,
+        city: sender.city,
+        state: sender.state,
         zip: sender.zip,
         country: sender.country,
-        company: "EasyPost",
-        phone: "415-123-4567",
+        company: sender.company,
+        phone: sender.phone,
       },
       to_address: {
-        name: "Dr. Steve Brule",
-        street1: "179 N Harbor Dr",
-        city: "Redondo Beach",
-        state: "CA",
+        name: recipient.name,
+        street1: recipient.street1,
+        city: recipient.city,
+        state: recipient.state,
         zip: recipient.zip,
         country: recipient.country,
-        phone: "4155559999",
+        phone: recipient.phone,
       },
       parcel: {
-        length: parcel[0].length,
-        width: parcel[0].width,
-        height: parcel[0].height,
-        weight: parcel[0].weight,
+        length: 10,
+        width: parseFloat(parcel[0].width),
+        height: parseFloat(parcel[0].height),
+        weight: parseFloat(parcel[0].weight),
       },
       customs_info: {
         eel_pfc: "NOEEI 30.37(a)",
@@ -78,7 +78,7 @@ exports.orderShip = async (req, res, next) => {
     // });
 
     // console.log(shipment);
-    console.log(shipment.id, shipment.lowestRate());
+    // console.log(shipment.id, shipment.lowestRate());
     res.json(shipment);
   } catch (e) {
     console.log(e);
@@ -220,6 +220,49 @@ exports.updateOrder = async (req, res, next) => {
     });
   } catch (e) {
     console.log(e);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+exports.adminOrder = async (req, res, next) => {
+  try {
+    const orderId = req.params.id;
+    const body = req.body;
+
+    console.log(body);
+
+    if (orderId) {
+      const updatedOrder = await Order.findOneAndUpdate(
+        { _id: orderId },
+        { ...body },
+        {
+          upsert: true,
+          new: true,
+        }
+      ).lean(); // Use lean() to convert the result to a plain JavaScript object
+
+      console.log(updatedOrder);
+
+      // Check if the order was found and updated
+      if (updatedOrder) {
+        res.status(200).json(updatedOrder);
+      } else {
+        res.status(404).json({ error: "Order not found" });
+      }
+    } else {
+      res.status(400).json({ error: "Invalid order ID" });
+    }
+  } catch (error) {
+    console.error("Error updating order status:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+exports.allOrder = async (req, res, next) => {
+  try {
+    const orders = Order.find({}).lean();
+
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error("Error updating order status:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };

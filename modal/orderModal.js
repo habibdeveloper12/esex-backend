@@ -15,6 +15,27 @@ const orderSchema = new Schema(
     shipment: { type: Object },
     orderItem: { type: String, default: "Saved" },
     orderStatus: { type: String, default: "pending" },
+    adminEditable: { type: Boolean, default: false },
+    // New fields from the provided object
+    customD: [
+      {
+        description: { type: String },
+        qty: { type: Number },
+        value: { type: Number },
+        totalValue: { type: Number },
+        hsV: { type: Number },
+        country: { type: String },
+      },
+    ],
+    transactionId: { type: String },
+    deliveryStatus: { type: String },
+    transitStatus: { type: String },
+    userNote: { type: String },
+    csNote: { type: String },
+    fpWeight: { type: String },
+    fbWeight: { type: String },
+    afee: { type: String },
+    adjustment: { type: String },
   },
   { timestamps: true, toJSON: { getters: true }, id: false }
 );
@@ -32,6 +53,8 @@ orderSchema.pre("save", async function (next) {
   }
   next();
 });
+
+// ... (existing code)
 
 const Order = mongoose.model("Order", orderSchema);
 
